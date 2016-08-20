@@ -4,10 +4,10 @@ import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import com.kilobolt.robotgame.Settings;
-
-public class StartingClass extends Applet implements Runnable {
+public class StartingClass extends Applet implements Runnable, KeyListener {
 	// Methods are frameworks for execution provided by the
 	// Applet class. In this Applet's life cycle, major events will
 	// call one of these methods and execute it
@@ -37,13 +37,12 @@ public class StartingClass extends Applet implements Runnable {
 		// If not enabled, you would have to click inside the applet
 		// before it starts handling keyboard events
 		setFocusable(true);
+		addKeyListener(this);
 
 		// Applet title
 		// Assigns the applet window to the frame variable
 		Frame frame = (Frame) this.getParent().getParent();
 		frame.setTitle("Q-Bot Alpha");
-		
-
 	}
 
 	@Override
@@ -86,6 +85,56 @@ public class StartingClass extends Applet implements Runnable {
 				e.printStackTrace();
 			}
 
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// Upon press of the button
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_UP:
+			System.out.println("Move up");
+			break;
+		case KeyEvent.VK_DOWN:
+			System.out.println("Move down");
+			break;
+		case KeyEvent.VK_LEFT:
+			System.out.println("Move left");
+			break;
+		case KeyEvent.VK_RIGHT:
+			System.out.println("Move right");
+			break;
+		case KeyEvent.VK_SPACE:
+			System.out.println("Jump");
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// Upon release of the button
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_UP:
+			System.out.println("Stop move up");
+			break;
+		case KeyEvent.VK_DOWN:
+			System.out.println("Stop move down");
+			break;
+		case KeyEvent.VK_LEFT:
+			System.out.println("Stop move left");
+			break;
+		case KeyEvent.VK_RIGHT:
+			System.out.println("Stop move right");
+			break;
+		case KeyEvent.VK_SPACE:
+			System.out.println("Stop jump");
+			break;
 		}
 	}
 }
