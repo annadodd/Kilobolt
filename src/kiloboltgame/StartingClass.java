@@ -4,8 +4,11 @@ import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URL;
+
 
 public class StartingClass extends Applet implements Runnable, KeyListener {
 	// Methods are frameworks for execution provided by the
@@ -17,13 +20,16 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	// it informs you when you make mistakes
 
 	// super refers to the super class.
+	
+	private Robot robot;
+	private Image image, character;
+	private Graphics second; 
+	private URL base;
+	
 	@Override
 	public void init() {
 		// Kind of like how a normal function runs the
 		// main (String args[]) method
-
-		// TODO: Auto generated method stub
-		super.init();
 
 		// Define certain params for the applet including:
 
@@ -43,19 +49,26 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 		// Assigns the applet window to the frame variable
 		Frame frame = (Frame) this.getParent().getParent();
 		frame.setTitle("Q-Bot Alpha");
+		try {
+			base = getDocumentBase();
+		} catch (Exception e) {
+			// TODO; handle exception
+		}
+		
+		// Image setups
+		character = getImage(base, "data/character.png");
 	}
 
 	@Override
 	public void start() {
-		// TODO: Auto generated method stub
-		// super.start();
+		robot = new Robot();
+		
 		Thread thread = new Thread(this);
 		thread.start();
 	}
 
 	@Override
 	public void stop() {
-		// TODO: Auto generated method stub
 		super.stop();
 	}
 
@@ -75,6 +88,7 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 			 * objects onto the screen). We haven't created paint method yet but
 			 * every 17 milliseconds, the paint method will be called
 			 */
+			robot.update();
 			repaint();
 			try {
 				// 1000 milliseconds (1 second) / 60 frames per second
@@ -87,7 +101,39 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 
 		}
 	}
-
+	@Override
+	public void update(Graphics g) {
+		/*
+		 *  Used for double buffering
+		 *  Prevents tearing and flickering
+		 *  Retains the previous position of the screen's current image
+		 *  for a short amount of time so the movement of the image
+		 *  looks smooth and natural 
+		 *  
+		 */
+		if (image == null) {
+			image = createImage(this.getWidth(), this.getHeight());
+			// Called for off screen images; creates a Graphics context
+			second = image.getGraphics();
+		}
+		// Basically saves current graphics context of image into second
+		second.setColor(getBackground());
+		// Fill second image rectangle from 0, 0 to getWidth, getHeight
+		second.fillRect(0, 0, getWidth(), getHeight());
+		second.setColor(getForeground());
+		paint(second);
+		
+		// Draws as much of the class image that is currently
+		// available to the g's Graphics context
+		g.drawImage(image, 0, 0, this);
+	}
+	
+	@Override
+	public void paint(Graphics g) {
+		// image variable, x, y, observer 
+		// Top left corner of robot is 61 pixels to left and 63 above center
+		g.drawImage(character, robot.getCenterX() - 61, robot.getCenterY() - 63, this);
+	}
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -105,13 +151,13 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 			System.out.println("Move down");
 			break;
 		case KeyEvent.VK_LEFT:
-			System.out.println("Move left");
+			robot.moveLeft();
 			break;
 		case KeyEvent.VK_RIGHT:
-			System.out.println("Move right");
+			robot.moveRight();
 			break;
 		case KeyEvent.VK_SPACE:
-			System.out.println("Jump");
+			robot.jump();
 			break;
 		}
 	}
@@ -127,14 +173,15 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 			System.out.println("Stop move down");
 			break;
 		case KeyEvent.VK_LEFT:
-			System.out.println("Stop move left");
+			robot.stop();
 			break;
 		case KeyEvent.VK_RIGHT:
-			System.out.println("Stop move right");
+			robot.stop();
 			break;
 		case KeyEvent.VK_SPACE:
 			System.out.println("Stop jump");
 			break;
 		}
 	}
+	
 }
