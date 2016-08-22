@@ -25,6 +25,11 @@ public class StartingClass extends Applet implements Runnable, KeyListener {
 	private Image image, character;
 	private Graphics second; 
 	private URL base;
+	/*
+	 *  We make them static so we can create getters and
+	 *  setters for them to be used in other classes for movement 
+	 */
+	private static Background bg1, bg2;
 	
 	@Override
 	public void init() {
